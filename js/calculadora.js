@@ -280,7 +280,59 @@
 function subnetting(address,subnets) {
 	//datos: address, clase, mascara
 	var data = identifyIP(address);
+	var bits;
+	var newSegment;
+	var newMascara;
 
-	alert(data[2]);
+	totalSubnets = Number(subnets) + 2;
+
+	if(totalSubnets > 2 && totalSubnets <= 4) {
+		newSegment = 192;
+	}
+	if(totalSubnets > 4 && totalSubnets <=8){
+		newSegment = 224;
+	}
+	if(totalSubnets > 8 && totalSubnets <=16){
+		newSegment = 240;
+	}
+	if (totalSubnets > 16 && totalSubnets <=32) {
+		newSegment = 248
+	}
+	if (totalSubnets > 32 && totalSubnets <=64) {
+		newSegment = 252
+	}
+	if (totalSubnets > 64 && totalSubnets <=128) {
+		newSegment = 254
+	}
+	if (totalSubnets > 128 && totalSubnets <=256) {
+		newSegment = 255
+	}
+
+	if(data[2].toString() == "255.255.255.0"){
+		newMascara = data[2].substring(0,12) + newSegment.toString();
+	}
+	if(data[2].toString() == "255.255.0.0"){
+		newMascara = data[2].substring(0,8) + newSegment.toString() + ".0";
+	}
+	if(data[2].toString() == "255.0.0.0"){
+		newMascara = data[2].substring(0,4) + newSegment.toString() + ".0.0";
+	}
+
+	document.getElementById('resultadoSubnetting').innerHTML = "<table class=\"centered\">"+
+			        "<thead>"+
+			          "<tr>"+
+			              "<th >IP</th>"+
+			              "<th >Clase</th>"+
+			              "<th >Máscara Predeterminada</th>"+
+			          "</tr>"+
+			        "</thead>"+
+			        "<tbody>"+
+			          "<tr>"+
+			            "<td>"+totalSubnets+"</td>"+
+			            "<td>"+data[2].toString()+"</td>"+
+			            "<td>"+newMascara+"</td>"+
+			          "</tr>"+
+			        "</tbody>"+
+			      "</table>";
 }
 

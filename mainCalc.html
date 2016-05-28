@@ -41,7 +41,7 @@
         <ul class="tabs">
           <li class="tab col s3"><a class="active" href="#convertidordec">BIN --> DEC</a></li>
           <li class="tab col s3"><a href="#convertidorbin">DEC --> BIN</a></li>
-          <li class="tab col s3"><a href="#classid">Identificador de Clase</a></li>
+          <li class="tab col s3"><a href="#classid">Class ID</a></li>
           <li class="tab col s3"><a href="#subneteo">Subneteo</a></li>
           <li class="tab col s3"><a href="#vlsm">VLSM</a></li>
         </ul>
@@ -121,12 +121,12 @@
           <div class="input-field col s3">
             <input placeholder="# Subredes" id="subnets" type="text" class="validate">
             <label for="subnets">Número de Subredes</label>
-            <button class="waves-effect waves-light btn" onclick="subnetting(document.getElementById('IPSubnet').value,document.getElementById('subnets').value)">Calcular</button>
+            <a class="waves-effect waves-light btn" onclick="subnetting(document.getElementById('IPSubnet').value,document.getElementById('subnets').value)">Calcular</a>
           </div>
         </div>
       
         <div class="col s12">
-          <p id="resultadoVLSM"></p>
+          <p id="resultadoSubnetting"></p>
         </div>
       </form>
     </div>
