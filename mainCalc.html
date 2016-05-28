@@ -3,12 +3,13 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Inicio | RD</title>
+  <title>Calculadora | RD</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <script type="text/javascript" src="js/calculadora.js"></script>
 </head>
 <body>
   <div class="navbar-fixed">
@@ -25,61 +26,125 @@
           <li><a href="mainCalc.html">Calculadora</a></li>
           <li><a href="about.html">Acerca</a></li>
         </ul>
-        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">Nav</i></a>
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">reorder</i></a>
       </div>
     </nav>
   </div>
 
-  <div class="section no-pad-bot" id="index-banner">
-    <div class="container">
-      <br><br>
-      <h1 class="header center light-green-text darken-3">Calculadora de Subneteo</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">Redes de datos, 2016-2</h5>
-      </div>
-      <div class="row center">
-        <a href="mainCalc.html" id="download-button" class="btn-large waves-effect waves-light orange">Empezar</a>
-      </div>
-      <br><br>
-
-    </div>
+  <div class="container">
+    <h3 class="center orange-text"> Redes Toolkit</h3>
   </div>
 
-
   <div class="container">
-    <div class="section">
-
-      <!--   Icon Section   -->
-      <div class="row">
-
-        <div class="col s6">
-          <div class="icon-block">
-            <h2 class="center green-text lighten-2"><i class="material-icons">group</i></h2>
-            <h5 class="center">
-              <a href="about.html">Equipo</a>
-            </h5>
-            <p class="center light">Integrantes de proyecto.</p>
-          </div>
-        </div>
-
-        <div class="col s6">
-          <div class="icon-block">
-            <h2 class="center green-text lighten-2"><i class="material-icons">settings</i></h2>
-            <h5 class="center">
-              <a href="tools.html">Herramientas</a>
-            </h5>
-
-            <p class="center light">MaterializeCSS, JS, HTML entre otros.</p>
-          </div>
-        </div>
+    <div class="row">
+      <div class="col s12">
+        <ul class="tabs">
+          <li class="tab col s3"><a class="active" href="#convertidordec">BIN --> DEC</a></li>
+          <li class="tab col s3"><a href="#convertidorbin">DEC --> BIN</a></li>
+          <li class="tab col s3"><a href="#classid">Identificador de Clase</a></li>
+          <li class="tab col s3"><a href="#subneteo">Subneteo</a></li>
+          <li class="tab col s3"><a href="#vlsm">VLSM</a></li>
+        </ul>
       </div>
+    </div>
+
+  <br>
+
+    <div class="row" id="convertidordec">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s4">
+            <input placeholder="01010010110" id="numBinario" type="text" class="validate">
+            <label for="numBinario">Número Binario</label>
+            <a class="waves-effect waves-light btn" onclick="binToDec()">Convertir</a>
+          </div>
+        </div>
+        
+        <div class="col s12">
+          <p id="resultadoDec"></p>
+        </div>
+
+      </form>
 
     </div>
-    <br><br>
 
-    <div class="section">
+    <div class="row" id="convertidorbin">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s4">
+            <input placeholder="0123456789" id="numDecimal" type="text" class="validate">
+            <label for="numDecimal">Número Decimal</label>
+            <a class="waves-effect waves-light btn" onclick="decToBin()">Convertir</a>
+          </div>
+        </div>
+        <div class="col s12">
+          <p id="resultadoBin"></p>
+        </div>
 
+      </form>
     </div>
+
+    <div class="row" id="classid">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s4">
+            <input placeholder="xxx.xxx.xxx.xxx" id="classIP" type="text" class="validate">
+            <label for="classIP">Dirección IP</label>
+            <a class="waves-effect waves-light btn" onclick="identifyIP(document.getElementById('classIP').value)">Identificar</a>
+          </div>
+        </div>
+        <div class="col s12">
+          <p id="resultadoClase"></p>
+        </div>
+        
+      </form>
+    </div>
+
+    <div class="row" id="subneteo">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s4">
+            <input placeholder="xxx.xxx.xxx.xxx" id="IPSubnet" type="text" class="validate">
+            <label for="IPSubnet">Dirección IP</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s3">
+            <input placeholder="# Hosts" id="hosts" type="text" class="validate"> 
+            <label for="hosts">Número de Hosts</label>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s3">
+            <input placeholder="# Subredes" id="subnets" type="text" class="validate">
+            <label for="subnets">Número de Subredes</label>
+            <button class="waves-effect waves-light btn" onclick="subnetting(document.getElementById('IPSubnet').value,document.getElementById('subnets').value)">Calcular</button>
+          </div>
+        </div>
+      
+        <div class="col s12">
+          <p id="resultadoVLSM"></p>
+        </div>
+      </form>
+    </div>
+
+    <div class="row" id="vlsm">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s4">
+            <input placeholder="xxx.xxx.xxx.xxx" id="direccionIp" type="text" class="validate">
+            <label for="first_name">Dirección IP</label>
+          </div>
+        </div>
+      <button class="waves-effect waves-light btn" onclick="vlsm()">Calcular</button>
+        <div class="col s12">
+          <p id="resultadoVLSM"></p>
+        </div>
+      </form>
+    </div>  
   </div>
 
   <footer class="page-footer teal darken-1">
