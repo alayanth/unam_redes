@@ -1,145 +1,4 @@
 
- var needBits;
- function analizar(){
-	 
-	 var ip1 = $("#ip1").val();
-	 var ip2 = $("#ip2").val();
-	 var ip3 = $("#ip3").val();
-	 var ip4 = $("#ip4").val();
-	 
-	 if( ip1 < 0 || ip1 >255 || ip2 < 0 || ip2 >255 || ip3 < 0 || ip3 >255 || ip4 < 0 || ip4 >255 ){
-		 error("Los valores de la IP deben de estar entre 0 y 255");
-		 return;
-	 }
-	 
-	 needBits = Math.ceil(log2(parseInt( $("#subsIn").val() )+2));
-	 
-	 if( ip1 < 128 ){
-		 $("#classOut").html("A");
-		 $("#MDout").html("255.0.0.0");
-		 if(needBits > 23 ){
-			 error("Demasiadas Subredes");
-			 return;
-		 }
-		 
-		 $("#NMout").html( creaMascara('A',needBits));
-		 $("#BPout").html(needBits);
-		 $("#TSout").html( Math.pow(2,needBits) );
-		 $("#THout").html( Math.pow(2,24-needBits) );
-		 $("#TSUout").html( Math.pow(2,needBits)-2 );
-		 $("#THUout").html( Math.pow(2,24-needBits)-2 );
-		 $("#ipesList").html( allIpesHtml('A', Math.pow(2,24-needBits) , Math.pow(2,needBits) , ip1) )
-		 
-	 }
-	 else if( ip1 < 192 ){
-		 $("#classOut").html("B");
-		 $("#MDout").html("255.255.0.0");
-		 if(needBits > 15 ){
-			 error("Demasiadas Subredes");
-			 return;
-		 }
-		 
-		 $("#NMout").html( creaMascara('B',needBits));
-		 $("#BPout").html(needBits);
-		 $("#TSout").html( Math.pow(2,needBits) );
-		 $("#THout").html( Math.pow(2,16-needBits) );
-		 $("#TSUout").html( Math.pow(2,needBits)-2 );
-		 $("#THUout").html( Math.pow(2,16-needBits)-2 );
-		 $("#ipesList").html( allIpesHtml('B', Math.pow(2,16-needBits) , Math.pow(2,needBits) , ip1+"."+ip2 ) )
-	 }
-	 else if( ip1 < 224 ){
-		 $("#classOut").html("C");
-		 $("#MDout").html("255.255.255.0");
-		 if(needBits > 7 ){
-			 error("Demasiadas Subredes");
-			 return;
-		 }
-		 
-		 $("#NMout").html( creaMascara('C',needBits));
-		 $("#BPout").html(needBits);
-		 $("#TSUout").html( Math.pow(2,needBits)-2 );
-		 $("#THUout").html( Math.pow(2,8-needBits)-2 );
-		 $("#ipesList").html( allIpesHtml('C', Math.pow(2,8-needBits) , Math.pow(2,needBits) , ip1+"."+ip2+"."+ip3 ) )
-		 
-	 }
-	 else if( ip1 < 240 ){
-		 $("#classOut").html("D");
-		 return;
-	 }
-	else{
-		 $("#classOut").html("E");
-		 return;
-	 }
-	 
-	 
- }
- 
- function creaMascara(clase, bits){
-	 var a=0,b=0,c=0;//255.a.b.c || 255.255.a.b || 255.255.255.a
-	 
-	 for(i = 0; i< bits; i++){
-		 if(i<8)
-		 	a+=Math.pow(2,7-i);
-		else if(i<15)
-			b+=Math.pow(2,15-i);
-		else if(i<23)
-			c+=Math.pow(2,23-i);
-	 }
-	 
-	 if(clase=='A')
-	 	return "255."+a+"."+b+"."+c;
-	else if(clase=='B')
-	 	return "255.255."+a+"."+b;
-	else if(clase=='C')
-	 	return "255.255.255."+a;
-	 
- }
- 
- function allIpesHtml(clase, hosts, subs,initialIp){
-
-	  var html = "";
-	  if(clase=='A')
-	  	digs = 3;
-		else if(clase=='B')
-		digs=2;
-		else if(clase=='C')
-		digs=1;
-		
-	 for( i=0; i<subs; i++){
-		 html+= "<li>"+initialIp+"."+notacionPunto(hosts*i,digs)+"</li>";//+" a "+initialIp+"."+notacionPunto(hosts*(i+1)-1)+"</li>";
-	 }
-	 return html;
- }
- 
- function notacionPunto(num,digs){
-	 console.log(digs);
-	if(num<256){
-		
-		if(digs == 2)
-			return "0."+num;
-		else if(digs == 3)
-			return "0.0."+num;
-		else
-			return num;
-	}
-	
-	else if(num<65536)
-		if(digs == 3)
-			return "0."+Math.floor((num/256))+"."+num%256;
-		else
-			return Math.floor((num/256))+"."+num%256;
-	else if(num<16777216)
-
-		return Math.floor((num/256)/256)+"."+Math.floor((num/256)%256)+"."+num%256;
- }
- 
- function error(e){
-	 alert(e);
- }
- function log2(val){
-	 return Math.log(val)/Math.log(2);
- }
-
  function binToDec() {
  	var binary = document.getElementById('numBinario').value;
  	binary = binary.toString(); 
@@ -276,63 +135,415 @@
 
 }
 
+function subnettingCIDR(address,cidr){
 
-function subnetting(address,subnets) {
-	//datos: address, clase, mascara
-	var data = identifyIP(address);
-	var bits;
-	var newSegment;
-	var newMascara;
-
-	totalSubnets = Number(subnets) + 2;
-
-	if(totalSubnets > 2 && totalSubnets <= 4) {
-		newSegment = 192;
-	}
-	if(totalSubnets > 4 && totalSubnets <=8){
-		newSegment = 224;
-	}
-	if(totalSubnets > 8 && totalSubnets <=16){
-		newSegment = 240;
-	}
-	if (totalSubnets > 16 && totalSubnets <=32) {
-		newSegment = 248
-	}
-	if (totalSubnets > 32 && totalSubnets <=64) {
-		newSegment = 252
-	}
-	if (totalSubnets > 64 && totalSubnets <=128) {
-		newSegment = 254
-	}
-	if (totalSubnets > 128 && totalSubnets <=256) {
-		newSegment = 255
-	}
-
-	if(data[2].toString() == "255.255.255.0"){
-		newMascara = data[2].substring(0,12) + newSegment.toString();
-	}
-	if(data[2].toString() == "255.255.0.0"){
-		newMascara = data[2].substring(0,8) + newSegment.toString() + ".0";
-	}
-	if(data[2].toString() == "255.0.0.0"){
-		newMascara = data[2].substring(0,4) + newSegment.toString() + ".0.0";
-	}
-
-	document.getElementById('resultadoSubnetting').innerHTML = "<table class=\"centered\">"+
-			        "<thead>"+
-			          "<tr>"+
-			              "<th >IP</th>"+
-			              "<th >Clase</th>"+
-			              "<th >Máscara Predeterminada</th>"+
-			          "</tr>"+
-			        "</thead>"+
-			        "<tbody>"+
-			          "<tr>"+
-			            "<td>"+totalSubnets+"</td>"+
-			            "<td>"+data[2].toString()+"</td>"+
-			            "<td>"+newMascara+"</td>"+
-			          "</tr>"+
-			        "</tbody>"+
-			      "</table>";
 }
 
+function subnettingNets(address,subnets) {	
+	//datos: address, clase, mascara
+	var data = identifyIP(address);
+	var segment = address.split(".");
+	var newSegment;
+	var ipBin = new Array;
+	var maskseg = data[2].split(".");
+
+	var claseIP = data[1];
+	var defaultSubMask = data[2];
+	var customSubnetMask;
+	var totalSubnets = new Number(0);
+	var totalHosts = new Number(0);
+	var usableHosts;
+	var borrowBits = new Number(0);
+	var bitsHosts = new Number(0);
+
+	while ((totalSubnets) < subnets){
+		borrowBits++;
+		totalSubnets = Math.pow(2,borrowBits);
+		//alert(totalSubnets);
+	}	
+
+	newSegment = creaSegmento(borrowBits,claseIP);
+
+	if(data[2].toString() == "255.255.255.0"){
+		customSubnetMask = data[2].substring(0,12) + newSegment;
+		totalHosts = Math.pow(2,8 - borrowBits);
+		usableHosts = totalHosts - 2;
+	}
+	if(data[2].toString() == "255.255.0.0"){
+		customSubnetMask = data[2].substring(0,8) + newSegment;
+		totalHosts = Math.pow(2,16 - borrowBits);
+		usableHosts = totalHosts - 2;
+	}
+	if(data[2].toString() == "255.0.0.0"){
+		customSubnetMask = data[2].substring(0,4) + newSegment;
+		totalHosts = Math.pow(2,24 - borrowBits);
+		usableHosts = totalHosts - 2;
+	}
+
+	document.getElementById('resultadoSubnetting').innerHTML = 
+				"<table class=\"centered striped\">"+
+
+			          "<tr>"+
+			              	"<th >Clase IP</th>"+
+			             	 "<td>"+claseIP+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Máscara de subred predeterminada</th>"+
+			            	"<td>"+defaultSubMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              "<th >Nueva máscara</th>"+
+			            	"<td>"+customSubnetMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de subredes</th>"+
+			             	 "<td>"+totalSubnets+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de hosts</th>"+
+			             	 "<td>"+totalHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número direcciones usables</th>"+
+			             	 "<td>"+usableHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número de bits prestados</th>"+
+			             	 "<td>"+borrowBits.toString()+"</td>"+
+			          "</tr>"+
+			      	"</table>";
+}
+
+function subnettingHosts(address,hosts) {
+	//datos: address, clase, mascara
+	var data = identifyIP(address);
+	var segment = address.split(".");
+	var newSegment;
+	var ipBin = new Array;
+	var maskseg = data[2].split(".");
+
+	var claseIP = data[1];
+	var defaultSubMask = data[2];
+	var customSubnetMask;
+	var totalSubnets = new Number(0);
+	var totalHosts = new Number(0);
+	var usableHosts;
+	var borrowBits = new Number(0);
+	var bitsHosts = new Number(0);
+
+	while ((totalHosts - 2) < hosts){
+		bitsHosts++;
+		totalHosts = Math.pow(2,bitsHosts);
+		alert(bitsHosts);
+	}
+
+	usableHosts = totalHosts - 2;
+
+	if(defaultSubMask == "255.255.255.0"){
+		customSubnetMask = data[2].substring(0,12) + newSegment;
+		totalSubnets = Math.pow(2,8 - bitsHosts);
+		borrowBits = 8 - bitsHosts;
+	}
+	if(defaultSubMask == "255.255.0.0"){
+		customSubnetMask = data[2].substring(0,8) + newSegment;
+		totalSubnets = Math.pow(2,16 - bitsHosts);
+		borrowBits = 16 - bitsHosts;
+	}
+	if(defaultSubMask == "255.0.0.0"){
+		customSubnetMask = data[2].substring(0,4) + newSegment;
+		totalSubnets = Math.pow(2,24 - bitsHosts);
+		borrowBits = 16 - bitsHosts;
+	}
+
+	newSegment = creaSegmento(borrowBits,claseIP);
+
+	if(defaultSubMask == "255.255.255.0"){
+		customSubnetMask = data[2].substring(0,12) + newSegment;
+	}
+	if(defaultSubMask == "255.255.0.0"){
+		customSubnetMask = data[2].substring(0,8) + newSegment;
+	}
+	if(defaultSubMask == "255.0.0.0"){
+		customSubnetMask = data[2].substring(0,4) + newSegment;
+	}
+
+	document.getElementById('resultadoSubnetting').innerHTML = 
+				"<table class=\"centered striped\">"+
+
+			          "<tr>"+
+			              	"<th >Clase IP</th>"+
+			             	 "<td>"+claseIP+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Máscara de subred predeterminada</th>"+
+			            	"<td>"+defaultSubMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              "<th >Nueva máscara</th>"+
+			            	"<td>"+customSubnetMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de subredes</th>"+
+			             	 "<td>"+totalSubnets+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de hosts</th>"+
+			             	 "<td>"+totalHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número direcciones usables</th>"+
+			             	 "<td>"+usableHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número de bits prestados</th>"+
+			             	 "<td>"+borrowBits.toString()+"</td>"+
+			          "</tr>"+
+			      	"</table>";
+}
+
+function subnetting(address,subnets,hosts) {
+	//datos: address, clase, mascara
+	var data = identifyIP(address);
+	var segment = address.split(".");
+	var newSegment;
+	var ipBin = new Array;
+	var maskseg = data[2].split(".");
+
+	var claseIP = data[1];
+	var defaultSubMask = data[2];
+	var customSubnetMask;
+	var totalSubnets = new Number(0);
+	var totalHosts = new Number(0);
+	var usableHosts;
+	var borrowBits = new Number(0);
+	var bitsHosts = new Number(0);
+
+	//anding
+	for (var i = 0; i <= segment.length - 1; i++) {
+		//cada segment se transforma a binario
+		ipBin[i] = (Number(segment[i]) >>> 0).toString(2);
+	}
+
+	while ((totalSubnets) < subnets){
+		borrowBits++;
+		totalSubnets = Math.pow(2,borrowBits);
+		//alert(totalSubnets);
+	}
+	while ((totalHosts - 2) < hosts){
+		bitsHosts++;
+		totalHosts = Math.pow(2,bitsHosts);
+		//alert(totalSubnets);
+	}
+
+	usableHosts = totalHosts - 2;
+	
+	newSegment = creaSegmento(borrowBits,claseIP);
+
+	if(data[2].toString() == "255.255.255.0"){
+		customSubnetMask = data[2].substring(0,12) + newSegment;
+	}
+	if(data[2].toString() == "255.255.0.0"){
+		customSubnetMask = data[2].substring(0,8) + newSegment;
+	}
+	if(data[2].toString() == "255.0.0.0"){
+		customSubnetMask = data[2].substring(0,4) + newSegment;
+	}
+
+	document.getElementById('resultadoSubnetting').innerHTML = 
+				"<table class=\"centered striped\">"+
+
+			          "<tr>"+
+			              	"<th >Clase IP</th>"+
+			             	 "<td>"+claseIP+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Máscara de subred predeterminada</th>"+
+			            	"<td>"+defaultSubMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              "<th >Nueva máscara</th>"+
+			            	"<td>"+customSubnetMask+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de subredes</th>"+
+			             	 "<td>"+totalSubnets+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número total de hosts</th>"+
+			             	 "<td>"+totalHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número direcciones usables</th>"+
+			             	 "<td>"+usableHosts.toString()+"</td>"+
+			          "</tr>"+
+			          "<tr>"+
+			              	"<th >Número de bits prestados</th>"+
+			             	 "<td>"+borrowBits.toString()+"</td>"+
+			          "</tr>"+
+			      	"</table>";
+
+	creaTabla(address,claseIP,defaultSubMask,customSubnetMask,totalSubnets,totalHosts,usableHosts,borrowBits);
+}
+
+function creaSegmento(bits,classe){
+	var newSegment;
+	switch(bits){
+		case 1:
+			if(classe == 'Clase A'){
+				newSegment = "128.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "128.0"
+			}else{
+				newSegment = "128";
+			}
+			break;
+		case 2:
+			if(classe == 'Clase A'){
+				newSegment = "192.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "192.0"
+			}else{
+				newSegment = "192";
+			}
+			break;
+		case 3:
+			if(classe == 'Clase A'){
+				newSegment = "224.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "224.0"
+			}else{
+				newSegment = "224";
+			}
+			break;
+		case 4:
+			if(classe == 'Clase A'){
+				newSegment = "240.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "240.0"
+			}else{
+				newSegment = "240";
+			}
+			break;
+		case 5:
+			if(classe == 'Clase A'){
+				newSegment = "248.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "248.0"
+			}else{
+				newSegment = "248";
+			}
+			break;
+		case 6:
+			if(classe == 'Clase A'){
+				newSegment = "252.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "252.0"
+			}else{
+				newSegment = "252";
+			}
+			break;
+		case 7:
+			if(classe == 'Clase A'){
+				newSegment = "254.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "254.0"
+			}else{
+				newSegment = "254";
+			}
+			break;
+		case 8:
+			if(classe == 'Clase A'){
+				newSegment = "255.0.0";
+			}else if(classe == 'Clase B'){
+				newSegment = "255.0"
+			}else{
+				newSegment = "255";
+			}
+			break;
+		case 9:
+			if (classe == 'Clase A') {
+				newSegment = "255.128.0";
+			}else{
+				newSegment = "255.128";
+			}
+			break;
+		case 10:
+			if (classe == 'Clase A') {
+				newSegment = "255.192.0";
+			}else{
+				newSegment = "255.192";
+			}
+			break;
+		case 11:
+			if (classe == 'Clase A') {
+				newSegment = "255.224.0";
+			}else{
+				newSegment = "255.224";
+			}
+			break;
+		case 12:
+			if (classe == 'Clase A') {
+				newSegment = "255.240.0";
+			}else{
+				newSegment = "255.240";
+			}
+			break;
+		case 13:
+			if (classe == 'Clase A') {
+				newSegment = "255.248.0";
+			}else{
+				newSegment = "255.248";
+			}
+			break;
+		case 14:
+			if (classe == 'Clase A') {
+				newSegment = "255.252.0";
+			}else{
+				newSegment = "255.252";
+			}
+			break;
+		case 15:
+			if (classe == 'Clase A') {
+				newSegment = "255.254.0";
+			}else{
+				newSegment = "255.254";
+			}
+			break;
+		case 16:
+			if (classe == 'Clase A') {
+				newSegment = "255.255.0";
+			}else{
+				newSegment = "255.255";
+			}
+			break;
+		case 17:
+			newSegment = "255.255.128";
+			break;
+		case 18:
+			newSegment = "255.255.192";
+			break;
+		case 19:
+			newSegment = "255.255.224";
+			break;
+		case 20:
+			newSegment = "255.255.240";
+			break;
+		case 21:
+			newSegment = "255.255.248";
+			break;
+		case 22:
+			newSegment = "255.255.252";
+			break;
+		case 23:
+			newSegment = "255.255.254";
+			break;
+		case 24:
+			newSegment = "255.255.255";
+			break;
+	}
+	return newSegment;
+}
+
+function creaTabla(address,classe,submask,customSubmask,subnets,hosts,usableHosts,borrowBits) {
+
+}

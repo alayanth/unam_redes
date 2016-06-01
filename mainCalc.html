@@ -10,6 +10,38 @@
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <script type="text/javascript" src="js/calculadora.js"></script>
+  <script type="text/javascript">
+    function tipoSubneteo() {
+        var direccion = document.getElementById('IPSubnet').value;
+        var subredes = document.getElementById('subnets').value;
+        var hosts = document.getElementById('hosts').value;
+        var cidr = document.getElementById('cidr').value;
+        debugger; 
+        if (direccion == "" && subredes == "" && hosts == "" && cidr == "") {
+          alert("Faltan Datos!");
+        }
+        if (direccion != '' && subredes == '' && hosts == '' && cidr == '') {
+          alert(" Faltan Subredes, hosts o CIDR");
+        }
+        if (direccion != '' && subredes != '' && hosts == '' && cidr == '') {
+          //alert(" IP | subredes");
+          subnettingNets(direccion,subredes);
+        }
+        if (direccion != '' && subredes == '' && hosts != '' && cidr == '') {
+          //alert("IP | hosts");
+          subnettingHosts(direccion,hosts);
+        }
+        if (direccion != '' && subredes != '' && hosts != '' && cidr == '') {
+          //alert("IP | subredes | hosts");
+          subnetting(direccion,subredes,hosts);
+        }
+        if (direccion != '' && subredes == '' && hosts == '' && cidr != '') {
+          //alert("IP | CIDR");
+          subnettingCIDR(direccion,cidr);
+        }
+    }
+
+  </script>
 </head>
 <body>
   <div class="navbar-fixed">
@@ -18,13 +50,13 @@
         <ul class="right hide-on-med-and-down">
           <li><a href="index.html">Inicio</a></li>
           <li><a href="mainCalc.html">Calculadora</a></li>
-          <li><a href="about.html">Acerca</a></li>
+          <li><a href="about.html">Integrantes</a></li>
         </ul>
 
         <ul id="nav-mobile" class="side-nav">
           <li><a href="index.html">Inicio</a></li>
           <li><a href="mainCalc.html">Calculadora</a></li>
-          <li><a href="about.html">Acerca</a></li>
+          <li><a href="about.html">Integrantes</a></li>
         </ul>
         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">reorder</i></a>
       </div>
@@ -43,7 +75,6 @@
           <li class="tab col s3"><a href="#convertidorbin">DEC --> BIN</a></li>
           <li class="tab col s3"><a href="#classid">Class ID</a></li>
           <li class="tab col s3"><a href="#subneteo">Subneteo</a></li>
-          <li class="tab col s3"><a href="#vlsm">VLSM</a></li>
         </ul>
       </div>
     </div>
@@ -103,55 +134,48 @@
     <div class="row" id="subneteo">
       <form class="col s12">
         <div class="row">
+          
           <div class="input-field col s4">
             <input placeholder="xxx.xxx.xxx.xxx" id="IPSubnet" type="text" class="validate">
             <label for="IPSubnet">Dirección IP</label>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s3">
-            <input placeholder="# Hosts" id="hosts" type="text" class="validate"> 
-            <label for="hosts">Número de Hosts</label>
-
+          <div class="input-field col s4">
+            <input type="number" id="cidr" placeholder="22" max="30" min="8">
+            <label for="CIDR">CIDR</label>
           </div>
         </div>
 
         <div class="row">
           <div class="input-field col s3">
-            <input placeholder="# Subredes" id="subnets" type="text" class="validate">
+            <input placeholder="# Subredes" id="subnets" type="number" class="validate" min="1">
             <label for="subnets">Número de Subredes</label>
-            <a class="waves-effect waves-light btn" onclick="subnetting(document.getElementById('IPSubnet').value,document.getElementById('subnets').value)">Calcular</a>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s3">
+            <input placeholder="# Hosts" id="hosts" type="number" class="validate" min="1"> 
+            <label for="hosts">Número de Hosts</label>
+            <a class="waves-effect waves-light btn" onclick="tipoSubneteo()">Calcular</a>
           </div>
         </div>
       
         <div class="col s12">
           <p id="resultadoSubnetting"></p>
         </div>
+        <div class="col s12">
+          <p id="tablaSubnetting"></p>
+        </div>
       </form>
     </div>
 
-    <div class="row" id="vlsm">
-      <form class="col s12">
-        <div class="row">
-          <div class="input-field col s4">
-            <input placeholder="xxx.xxx.xxx.xxx" id="direccionIp" type="text" class="validate">
-            <label for="first_name">Dirección IP</label>
-          </div>
-        </div>
-      <button class="waves-effect waves-light btn" onclick="vlsm()">Calcular</button>
-        <div class="col s12">
-          <p id="resultadoVLSM"></p>
-        </div>
-      </form>
-    </div>  
   </div>
 
   <footer class="page-footer teal darken-1">
     <div class="container">
       <p class="grey-text text-lighten-4">Ciudad Universitaria, Facultad de Ingenería, UNAM | México | 2016</p>
       <img src="http://es.creativecommons.org/blog/wp-content/uploads/2013/04/by_petit.png"> 
-      <p class="grey-text text-lighten-4">Se permite cualquier explotación de la obra, incluyendo una finalidad comercial, así como la creación de obras derivadas, la distribución de las cuales también está permitida sin ninguna restricción.</p>
+      <p class="grey-text text-lighten-4">Se permite cualquier explotación de la obra, incluyendo una finalidad comercial, así como la creación de obras derivadas, la distribución de las cuales también está permitida sin ninguna restricción. Únicamente se debe dar el crédito correspondiente a los autores.</p>
     </div>
     <div class="footer-copyright">
       <div class="container">
