@@ -234,7 +234,7 @@ function subnettingHosts(address,hosts) {
 	while ((totalHosts - 2) < hosts){
 		bitsHosts++;
 		totalHosts = Math.pow(2,bitsHosts);
-		alert(bitsHosts);
+		//alert(bitsHosts);
 	}
 
 	usableHosts = totalHosts - 2;
